@@ -6,6 +6,7 @@
     "configurations": [
         
         
+        
         {
             "name": "Listen for XDebug",
             "type": "php",
@@ -18,6 +19,15 @@
             "request": "launch",
             "program": "${file}",
             "cwd": "${fileDirname}",
+            "port": 9000
+        },
+        {
+            "name": "Listen for XDebug on Homestead",
+            "type": "php",
+            "request": "launch",
+            "pathMappings": {
+                "/home/vagrant/Code/": "/Users/JerryHuang/Code/"
+            },
             "port": 9000
         }
     ]
