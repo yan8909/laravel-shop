@@ -43,36 +43,36 @@ class PaymentController extends Controller
         // (Optional) Lets you specify item wise
         // information
         
-        // $items = [];
-        // foreach($order->items() as $item)
-        // {
-        //     $item = new Item();
-        //     $item->setName($item->product->title)
+        $items = [];
+        foreach($order->items as $product)
+        {
+            $item = new Item();
+            $item->setName($product->product->title)
+            ->setCurrency('USD')
+            ->setQuantity($product->amount)
+            ->setSku($product->productSku->title) // Similar to `item_number` in Classic API
+            ->setPrice($product->price * $product->amount);
+            array_push($items, $item);
+        };
+        //  return view('test', compact('items', 'order'));
+    
+        
+        // $item1 = new Item();
+        // $item1->setName("Laravel Shop's order:" . $order->no)
         //     ->setCurrency('USD')
         //     ->setQuantity(1)
-        //     ->setSku($item->productSku->title) // Similar to `item_number` in Classic API
+        //     // ->setSku("123123") // Similar to `item_number` in Classic API
         //     ->setPrice($order->total_amount);
-        //     $items[] = $item;
-        // };
-
-        $item1 = new Item();
-        $item1->setName("Laravel Shop's order:" . $order->no)
-            ->setCurrency('USD')
-            ->setQuantity(1)
-            // ->setSku("123123") // Similar to `item_number` in Classic API
-            ->setPrice($order->total_amount);
-
 
 
         $itemList = new ItemList();
-        $itemList->setItems(array($item1));
+        $itemList->setItems($items);
         // ### Additional payment details
         // Use this optional field to set additional
         // payment information such as tax, shipping
         // charges etc.
         $details = new Details();
-        $details
-            ->setSubtotal($order->total_amount);
+        $details->setSubtotal($order->total_amount);
         // ### Amount
         // Lets you specify a payment amount.
         // You can also specify additional details

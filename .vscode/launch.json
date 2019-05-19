@@ -26,7 +26,7 @@
             "type": "php",
             "request": "launch",
             "pathMappings": {
-                "/home/vagrant/Code/": "/Users/JerryHuang/Code/"
+                "/home/vagrant/Code/laravel-shop": "/Users/JerryHuang/Code/laravel-shop"
             },
             "port": 9000
         }

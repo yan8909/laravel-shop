@@ -84,7 +84,7 @@
                         @if(!$order->paid_at && !$order->closed)
                         <div class="payment-buttons">
                             <a class="btn btn-primary btn-sm"
-                                href="{{ route('payment.create-paypal', ['order' => $order->id]) }}">Pay By Paypal</a>
+                                href="{{ route('payment.create-paypal', ['order' => $order->load(['items.productSku', 'items.product'])]) }}">Pay By Paypal</a>
                         </div>
                         @endif
                         <!-- 支付按钮结束 -->
