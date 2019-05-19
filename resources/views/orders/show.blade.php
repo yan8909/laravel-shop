@@ -80,6 +80,14 @@
                                 @endif
                             </div>
                         </div>
+                        <!-- 支付按钮开始 -->
+                        @if(!$order->paid_at && !$order->closed)
+                        <div class="payment-buttons">
+                            <a class="btn btn-primary btn-sm"
+                                href="{{ route('payment.create-paypal', ['order' => $order->id]) }}">Pay By Paypal</a>
+                        </div>
+                        @endif
+                        <!-- 支付按钮结束 -->
                     </div>
                 </div>
             </div>
@@ -87,3 +95,36 @@
     </div>
 </div>
 @endsection
+
+{{-- @section('scriptsAfterJs')
+<script src="https://www.paypal.com/sdk/js?client-id=sb"></script>
+<script>
+    // Render the PayPal button into #paypal-button-container
+    paypal.Buttons({
+
+        // Set up the transaction
+        createOrder: function(data, actions) {
+            return fetch('/api/create-payment', {
+                method: 'post'
+            }).then(function(res) {
+                return res.json();
+            }).then(function(data) {
+                return data.orderID;
+            });
+        },
+
+        // Finalize the transaction
+        onApprove: function(data, actions) {
+            return fetch('/demo/checkout/api/paypal/order/' + data.orderID + '/capture/', {
+                method: 'post'
+            }).then(function(res) {
+                return res.json();
+            }).then(function(details) {
+                // Show a success message to the buyer
+                alert('Transaction completed by ' + details.payer.name.given_name + '!');
+            });
+        }
+
+
+    }).render('#paypal-button');
+</script> --}}

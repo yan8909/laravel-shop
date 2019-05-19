@@ -7,7 +7,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use App\Models\ProductSku;
 
-class OrderRequest extends FormRequest
+class OrderRequest extends Request
 {
     /**
      * Determine if the user is authorized to make this request.
