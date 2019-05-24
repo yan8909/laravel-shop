@@ -37,5 +37,8 @@ Route::group(['middleware' => ['auth', 'verified']], function() {
     Route::get('orders/{order}', 'OrdersController@show')->name('orders.show');
     Route::get('payment/{order}/create-paypal', 'PaymentController@createPaypal')->name('payment.create-paypal');
     Route::get('payment/{order}/execute-paypal', 'PaymentController@executePaypal')->name('payment.execute-paypal');
+    Route::get('payment/paypal/return', 'PaymentController@paypalReturn')->name('payment.paypal.return');
+    Route::get('payment/paypal/return', 'PaymentController@paypalReturn')->name('payment.paypal.return');
 });
+
 

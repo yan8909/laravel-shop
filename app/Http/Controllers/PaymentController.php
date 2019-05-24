@@ -15,6 +15,8 @@ use PayPal\Rest\ApiContext;
 use PayPal\Api\PaymentExecution;
 use PayPal\Auth\OAuthTokenCredential;
 use App\Models\Order;
+use Debugbar;
+use Carbon\Carbon;
 
 class PaymentController extends Controller
 {
@@ -130,15 +132,16 @@ class PaymentController extends Controller
         return redirect($approvalUrl);
     }
 
-    public function executePaypal(Order $order)
+    public function executePaypal(Order $order, Request $request)
     {
+        
         // ### Approval Status
         // Determine if the user approved the payment or not
-        if (isset($_GET['success']) && $_GET['success'] == 'true') {
+        // if (isset($_GET['success']) && $_GET['success'] == 'true') {
             // Get the payment Object by passing paymentId
             // payment id was previously stored in session in
             // CreatePaymentUsingPayPal.php
-            $paymentId = $_GET['paymentId'];
+            $paymentId = $request->paymentId;
             $payment = Payment::get($paymentId, $this->apiContext);
             // ### Payment Execute
             // PaymentExecution object includes information necessary
@@ -146,48 +149,60 @@ class PaymentController extends Controller
             // The payer_id is added to the request query parameters
             // when the user is redirected from paypal back to your site
             $execution = new PaymentExecution();
-            $execution->setPayerId($_GET['PayerID']);
+            $execution->setPayerId($request->PayerID);
             // ### Optional Changes to Amount
             // If you wish to update the amount that you wish to charge the customer,
             // based on the shipping address or any other reason, you could
             // do that by passing the transaction object with just `amount` field in it.
             // Here is the example on how we changed the shipping to $1 more than before.
-            $transaction = new Transaction();
-            $amount = new Amount();
-            $details = new Details();
-            $details
-                ->setSubtotal($order->total_amount);
-            $amount->setCurrency('USD');
-            $amount->setTotal($order->total_amount);
-            $amount->setDetails($details);
-            $transaction->setAmount($amount);
+            // $transaction = new Transaction();
+            // $amount = new Amount();
+            // $details = new Details();
+            // $details
+            //     ->setSubtotal($order->total_amount);
+            // $amount->setCurrency('USD');
+            // $amount->setTotal($order->total_amount);
+            // $amount->setDetails($details);
+            // $transaction->setAmount($amount);
             // Add the above transaction object inside our Execution object.
-            $execution->addTransaction($transaction);
+            // $execution->addTransaction($transaction);
             try {
                 // Execute the payment
                 // (See bootstrap.php for more on `ApiContext`)
                 $result = $payment->execute($execution, $this->apiContext);
                 // NOTE: PLEASE DO NOT USE RESULTPRINTER CLASS IN YOUR ORIGINAL CODE. FOR SAMPLE ONLY
-                print("Executed Payment" . $payment->getId() . "Result:" . $result);
-                try {
-                    $payment = Payment::get($paymentId, $this->apiContext);
-                } catch (Exception $ex) {
-                    // NOTE: PLEASE DO NOT USE RESULTPRINTER CLASS IN YOUR ORIGINAL CODE. FOR SAMPLE ONLY
-                    print("Get Payment");
-                    exit(1);
-                }
+                // print("Executed Payment" . $payment->getId() . "Result:" . $result);
+                // try {
+                //     $payment = Payment::get($paymentId, $this->apiContext);
+                // } catch (Exception $ex) {
+                //     // NOTE: PLEASE DO NOT USE RESULTPRINTER CLASS IN YOUR ORIGINAL CODE. FOR SAMPLE ONLY
+                //     print("Get Payment");
+                //     exit(1);
+                // }
             } catch (Exception $ex) {
                 // NOTE: PLEASE DO NOT USE RESULTPRINTER CLASS IN YOUR ORIGINAL CODE. FOR SAMPLE ONLY
-                print("Executed Payment");
-                exit(1);
+                // print("Executed Payment");
+                // echo $ex;
+                // exit(1);
+                return view('pages.error', ['msg' => '数据不正确']);
             }
             // NOTE: PLEASE DO NOT USE RESULTPRINTER CLASS IN YOUR ORIGINAL CODE. FOR SAMPLE ONLY
-            print("Get Payment" . $payment->getId());
-            return $payment;
-        } else {
-            // NOTE: PLEASE DO NOT USE RESULTPRINTER CLASS IN YOUR ORIGINAL CODE. FOR SAMPLE ONLY
-            print("User Cancelled the Approval");
-            exit;
-        }
+            // print("Get Payment" . $payment->getId());
+            if($order->paid_at){
+                return view('pages.success', ['msg' => '付款成功']);
+            }
+            $order->update([
+                'paid_at' => Carbon::now(),
+                'payment_method' => 'paypal',
+                'payment_no' =>  $result->id
+            ]);
+            return view('pages.success', ['msg' => '付款成功']);
+        // } else {
+        //     // NOTE: PLEASE DO NOT USE RESULTPRINTER CLASS IN YOUR ORIGINAL CODE. FOR SAMPLE ONLY
+        //     print("User Cancelled the Approval");
+        //     exit;
+        // }
     }
+
+    
 }
