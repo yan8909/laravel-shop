@@ -196,6 +196,7 @@ class PaymentController extends Controller
                 'payment_method' => 'paypal',
                 'payment_no' =>  $result->id
             ]);
+            $this->afterPaid($order);
             return view('pages.success', ['msg' => '付款成功']);
         // } else {
         //     // NOTE: PLEASE DO NOT USE RESULTPRINTER CLASS IN YOUR ORIGINAL CODE. FOR SAMPLE ONLY

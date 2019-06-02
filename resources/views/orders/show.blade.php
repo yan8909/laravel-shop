@@ -68,15 +68,15 @@
                             <span>订单状态：</span>
                             <div class="value">
                                 @if($order->paid_at)
-                                @if($order->refund_status === \App\Models\Order::REFUND_STATUS_PENDING)
-                                已支付
-                                @else
-                                {{ \App\Models\Order::$refundStatusMap[$order->refund_status] }}
-                                @endif
+                                    @if($order->refund_status === \App\Models\Order::REFUND_STATUS_PENDING)
+                                        已支付
+                                    @else
+                                        {{ \App\Models\Order::$refundStatusMap[$order->refund_status] }}
+                                    @endif
                                 @elseif($order->closed)
-                                已关闭
+                                    已关闭
                                 @else
-                                未支付
+                                    未支付
                                 @endif
                             </div>
                         </div>
